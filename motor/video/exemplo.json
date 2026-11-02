@@ -1,0 +1,18 @@
+{
+  "cenas": [
+    { "tipo": "gancho", "duracao": 2.5, "chapeu": "3 sinais", "titulo": "Sua empresa já pede um *sistema?*" },
+    { "tipo": "lista", "duracao": 6, "chapeu": "Você reconhece?", "titulo": "Se vive isso, *já passou da hora.*", "itens": ["Só uma pessoa sabe mexer na planilha.", "Pedido importante se perde no WhatsApp.", "Fechar o mês leva dias, não horas."] },
+    { "tipo": "tela", "duracao": 5, "titulo": "O mesmo controle, *num painel.*" },
+    { "tipo": "texto", "duracao": 3.5, "titulo": "Não precisa ser *grande.*", "texto": "Precisa resolver a dor que mais toma o seu tempo." },
+    { "tipo": "chamada", "duracao": 4, "texto": "Qual tarefa mais toma o seu tempo hoje?" },
+    { "tipo": "vinheta", "duracao": 2.5 }
+  ],
+  "legendas": [
+    { "de": 0.2, "ate": 2.4, "texto": "Três sinais de que sua empresa já pede um sistema." },
+    { "de": 2.6, "ate": 4.4, "texto": "Só uma pessoa sabe mexer na planilha." },
+    { "de": 4.4, "ate": 6.4, "texto": "Pedido se perde no WhatsApp." },
+    { "de": 6.4, "ate": 8.4, "texto": "E fechar o mês leva *dias.*" },
+    { "de": 8.6, "ate": 13.3, "texto": "Tudo isso cabe num painel simples." },
+    { "de": 13.5, "ate": 16.9, "texto": "Não precisa ser grande. Precisa resolver." }
+  ]
+}

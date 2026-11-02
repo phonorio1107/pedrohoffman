@@ -1,0 +1,22 @@
+{
+  "name": "pedrohoffman-motor",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Motor de artes e vídeos da marca Pedro Hoffman (identidade Degrau).",
+  "type": "module",
+  "scripts": {
+    "arte": "node carrossel/render.mjs",
+    "video:estudio": "remotion studio video/index.ts",
+    "video": "node video/render.mjs"
+  },
+  "dependencies": {
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/inter-tight": "5.3.0",
+    "@remotion/cli": "4.0.535",
+    "@remotion/fonts": "4.0.535",
+    "playwright": "1.63.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "remotion": "4.0.535"
+  }
+}

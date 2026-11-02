@@ -1,0 +1,12 @@
+{
+  "formato": "story",
+  "slides": [
+    {
+      "tipo": "degraus",
+      "fundo": "claro",
+      "titulo": "3 sinais de que sua empresa já pede um *sistema*",
+      "itens": ["Só uma pessoa sabe mexer na planilha.", "Pedido importante se perde no WhatsApp.", "Fechar o mês leva dias, não horas."],
+      "botao": "Responda com \"DOR\" e eu te ajudo"
+    }
+  ]
+}

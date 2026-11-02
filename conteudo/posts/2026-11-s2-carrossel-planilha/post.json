@@ -1,0 +1,86 @@
+{
+  "formato": "feed",
+  "pilar": "dor",
+  "slides": [
+    {
+      "tipo": "capa",
+      "chapeu": "Planilhas",
+      "titulo": "A planilha que *só você* entende.",
+      "subtitulo": "Ela parece de graça. Veja quanto ela cobra por mês."
+    },
+    {
+      "tipo": "lista",
+      "chapeu": "Você reconhece?",
+      "titulo": "Os sinais de que ela já *virou um problema.*",
+      "itens": [
+        "Ninguém mexe sem te chamar antes.",
+        "Cada aba tem um jeito de preencher.",
+        "Uma fórmula quebrada estraga o mês inteiro."
+      ],
+      "rodape": "Se marcou dois, continua no próximo."
+    },
+    {
+      "tipo": "degraus",
+      "chapeu": "O custo escondido",
+      "titulo": "O que ela cobra *sem mandar boleto.*",
+      "itens": [
+        "Seu tempo conferindo o que já foi feito.",
+        "Erro que vira retrabalho ou prejuízo.",
+        "O negócio parado quando você não está."
+      ]
+    },
+    {
+      "tipo": "antesDepois",
+      "chapeu": "Um degrau acima",
+      "titulo": "A mesma rotina, *organizada.*",
+      "antes": [
+        "Planilha com 12 abas",
+        "Conferência manual",
+        "Só você sabe onde está"
+      ],
+      "depois": [
+        "Um painel simples",
+        "Avisa quando algo falta",
+        "Qualquer pessoa consulta"
+      ]
+    },
+    {
+      "tipo": "texto",
+      "chapeu": "O ponto",
+      "titulo": "Planilha não é o vilão. *O improviso é.*",
+      "texto": "Quando a rotina depende da memória de uma pessoa, qualquer folga vira problema. Organizar é tirar a rotina da sua cabeça e colocar num lugar que funciona sozinho."
+    },
+    {
+      "tipo": "grade",
+      "chapeu": "Por onde começar",
+      "titulo": "Antes de pensar em sistema, *responda:*",
+      "cards": [
+        {
+          "icone": "relogio",
+          "titulo": "Quanto tempo?",
+          "texto": "Horas por semana nessa planilha."
+        },
+        {
+          "icone": "pessoa",
+          "titulo": "Quem depende?",
+          "texto": "Quantas pessoas esperam por ela."
+        },
+        {
+          "icone": "alerta",
+          "titulo": "Qual o erro?",
+          "texto": "O que já deu errado por causa dela."
+        },
+        {
+          "icone": "simbolo",
+          "titulo": "Me conta.",
+          "texto": "Com essas respostas eu te digo o caminho.",
+          "destaque": true
+        }
+      ]
+    },
+    {
+      "tipo": "chamada",
+      "texto": "Qual planilha mais toma o seu tempo hoje? A primeira conversa é por minha conta."
+    }
+  ]
+}
