@@ -1,61 +1,32 @@
-# PROJETO · CRM Pedro Hoffman
+# CRM Pedro Hoffman
 
-Sistema **interno** de prospecção e carteira. Usuário único: Pedro. Não é de cliente, então as fases de cliente (aprovação, contrato, LGPD de terceiros) viram "n/a" ou ficam adaptadas.
+CRM interno de prospecção. Só o Pedro usa.
+Página de teste (dados só no navegador): https://claude.ai/artifact/DXDXtXK2N8wCkNhccwzVr3
 
-- **Repositório:** `phonorio1107/pedrohoffman`, pasta `crm/` (hoje público; vai ficar privado quando o Pedro ligar dados reais).
-- **Design:** canvas "Sistema Pedro Hoffman" (aprovado) + design system "Pedro Hoffman Degrau".
-- **Página de teste (modo demonstração):** https://claude.ai/artifact/DXDXtXK2N8wCkNhccwzVr3
-- **Nota sobre a skill `novo-cliente-saas`:** a cópia sincronizada só trouxe o `SKILL.md`. As referências (`fases.md`, `banco.md`, `testes.md`, `manutencao.md`, `licoes.md`) e os scripts (`migrar.sh`) não vieram. Este arquivo e os scripts de banco foram montados a partir do resumo do `SKILL.md`. Se as referências existirem em outro lugar, conferir e ajustar.
+## Pronto
+- Importar planilha do Outscraper (CSV ou Excel), com as colunas reconhecidas sozinhas.
+- Nota de oportunidade de 0 a 100, com os motivos.
+- Descarte automático de redes, franquias e lugares fechados; duplicados atualizam em vez de repetir.
+- Lista de leads com funil, abas, filtros e exportação.
+- Ficha do lead: mensagem pronta (WhatsApp, Direct, E-mail), Abrir no WhatsApp, Copiar, status, próximo passo, observações e histórico.
+- Modelos de mensagem editáveis, por nicho e canal.
+- Tela Hoje: meta do dia, pilotos ativos e a fila (cobranças, prévias, primeiros contatos).
+- Celular: barra com Pular, Copiar e Abrir no WhatsApp; ao voltar, pergunta "Mandou a mensagem?" e segue para o próximo lead.
 
-## Fase atual
-**Fase 6 (construir) em andamento: Fases 1 e 2 do produto prontas** (importar, nota, lista, ficha, mensagem, WhatsApp, histórico, modelos, fila Hoje e celular). Próxima: Fase 3 do produto (carteira). Bloqueio para dado real: Supabase ainda não criado (Pedro) e repositório ainda público.
+## Falta
+- **Pedro:** criar o Supabase e rodar `supabase/aplicar/01` e depois `02` no SQL Editor.
+- **Pedro:** deixar o repositório privado antes de usar com dados reais.
+- **Pedro:** publicar no Cloudflare (passos no `README.md`).
+- Carteira de clientes (contratos, pagamentos, alertas): quando fechar o primeiro cliente.
+- Monitor dos sites dos clientes: depois da carteira.
 
 ## Decisões
-| Data | Decisão |
-|---|---|
-| 16/11 | Plataforma de cardápio (Cardápio Web, MenuDino, Brendi, Linktree...) vale **+27**, igual a "só iFood" |
-| 16/11 | Redes e franquias são **descartadas automaticamente** |
-| 16/11 | O nicho fica **em aberto**: cada lote recebe o nicho na hora da importação |
-| 16/11 | Outscraper: usar **só o Raspador do Google Maps, sem pacote de enriquecimento** |
-| 16/11 | O sistema fica neste repositório; o Pedro deixa privado depois |
-| 16/11 | Alta oportunidade a partir de 65 (sem e-mail o máximo é 85); Média 45 a 64 |
-| 16/11 | Sem nicho definido: o CRM é genérico; modelo de mensagem por nicho, com um modelo geral para sistema sob medida enquanto não há nicho |
-| 16/11 | Abordagem padrão: pergunta curta sobre a rotina (pedidos, orçamentos, agenda) e pedido de licença para mandar uma prévia. **Sem palavra-código** ("DOR" é para os posts; aqui o Pedro é quem procura) |
-| 16/11 | Fase 2 do produto em duas entregas: 1) ficha + mensagem + histórico; 2) fila Hoje + celular |
-| 16/11 | Fila Hoje: retornos vencidos primeiro, depois quem respondeu (mandar prévia), depois primeiros contatos por nota até a meta. Meta padrão 12, guardada no aparelho; limite de 3 pilotos só avisa, não bloqueia |
-| 16/11 | O CRM abre na tela Hoje |
-| 16/11 | Seguir o padrão da skill `novo-cliente-saas` (Workers estáticos, grants explícitos, PROJETO.md) |
-| **em aberto** | Onde fica o Supabase: conta do Pedro, plano gratuito ou Pro? (Gratuito: sem backup automático e pausa após 1 semana sem uso) |
-| **em aberto** | Pesos da nota de oportunidade: hoje favorecem quem não tem site; para sistema sob medida, rever quando o nicho for escolhido |
-| **em aberto** | Domínio do CRM (pode ficar no endereço `.workers.dev` por enquanto) |
-
-## Fases
-
-| # | Fase | Status |
-|---|---|---|
-| 1 | Descoberta e escopo | ✅ `[x]` escopo definido no chat "Pedro Hoffman CRM system" (prospecção + carteira, 4 fases do produto) |
-| 2 | Modelagem e protótipo | ✅ `[x]` canvas com 8 telas; o Pedro aprovou ("curti de momento"), 16/11. Aprovação de cliente: n/a |
-| 3 | Contas e repositório | 🟨 repositório `[x]`; Supabase `[ ]` (Pedro); Cloudflare `[ ]` (Pedro); repositório privado `[ ]` (Pedro) |
-| 4 | Banco e RLS | 🟨 `[x]` migração com RLS, uma política por operação e grants, testada num Postgres 16 local (banco novo e banco com dados) pelo `scripts/testar-banco.sh`. `[ ]` aplicada no Supabase real (Pedro) |
-| 5 | Login e permissões | 🟨 `[x]` tela de login e Supabase Auth no código. `[ ]` testado com Supabase real; `[ ]` cadastro público desligado (Pedro) |
-| 6 | Construir o sistema | 🟨 Fases 1 e 2 do produto `[x]` (importação, nota, lista, ficha, modelos, fila Hoje, celular). Fases 3 e 4 do produto `[ ]` |
-| 7 | Design | 🟨 `[x]` visual Degrau aplicado, um botão principal por tela. `[ ]` `npm run auditoria` (contraste, formatos, nos dois temas) não existe ainda neste projeto; tema escuro `[ ]` dispensado por ora (CRM só claro) |
-| 8 | Domínio, e-mail próprio e cabeçalhos | 🟨 `[x]` `_headers` com CSP gerado no build, testado sem violações. `[ ]` domínio próprio; e-mail próprio n/a (CRM não envia e-mail) |
-| 9 | LGPD | 🟨 Dados de empresas públicas do Google Maps; mensagens personalizadas, poucas por dia. `[ ]` registrar como o Pedro atende pedido de "não me contate" (campo no lead, Fase 2 do produto) |
-| 10 | Qualidade | 🟨 `[x]` `tsc`, `vitest` (8) e `build` passando. `[x]` teste de isolamento da RLS. `[ ]` teste de tela com Playwright salvo no repositório; `[ ]` backup com restauração testada (depende do Supabase) |
-| 11 | Go-live | `[ ]` antes de dado real: Supabase com backup, repositório privado, dados de teste apagados |
-| 12 | Operação | `[ ]` |
-
-## O que falta o Pedro fazer
-1. Criar o projeto no Supabase (região São Paulo) e decidir plano gratuito ou Pro.
-2. Colar `supabase/aplicar/01-fase1_prospeccao.sql` no SQL Editor (confirmar "Run and enable RLS") e **me avisar que rodou**.
-3. Criar o usuário e desligar o cadastro de novas contas.
-4. Deixar o repositório privado antes de ligar dados reais.
-5. Criar o app no Cloudflare e colar as duas variáveis `VITE_SUPABASE_*`.
-
-## Histórico (mais recente em cima)
-- **16/11 · Produto, Fase 2, entrega 2.** Tela Hoje: meta do dia em degraus (mensagens enviadas hoje, sem contar repetidas), pilotos ativos de 3, fila com retornos vencidos, prévias e primeiros contatos, filtros. Ficha no celular: mensagem primeiro, barra fixa com Pular, Copiar e Abrir no WhatsApp acima das abas; ao voltar do WhatsApp pergunta "Mandou a mensagem?" (cobrar em 1, 2 ou 4 dias) e segue para o próximo lead. Corrigido de passagem: datas sem horário apareciam com um dia a menos (fuso). Testes: `vitest` 18, navegador 16 verificações no celular (iPhone 13) e 15 no computador, sem erros no console nem rolagem lateral. Sem mudança no banco. **Falta:** nada novo do Pedro além dos passos do Supabase.
-- **16/11 · Produto, Fase 2, entrega 1.** Ficha do lead (`/leads/:id`): nota com motivos, dados do Maps, mensagem pronta por canal (WhatsApp, Direct, E-mail) com os dados do lead destacados, botão "Abrir no WhatsApp" (`wa.me`), Copiar, "Marquei como enviada" (status Contatado + cobrança em 1, 2 ou 4 dias), status, próximo passo com data, observações e histórico. Tela de Modelos (por nicho e canal, com prévia de lead inventado). Horário do Maps traduzido (ex.: "Seg 11h–14h15 e 18h–22h30"). Migração `20261116200000_fase2_modelos_mensagem.sql` (grants, RLS, índice único) testada em Postgres local: banco novo, banco com dados e isolamento entre usuários, incluindo a tabela nova. Testado no navegador (15 verificações, computador e celular) e `vitest` com 14 testes. Bug achado e corrigido nos testes: o próximo passo não atualizava na tela depois de "Marquei como enviada". **Falta:** o Pedro rodar `supabase/aplicar/02-fase2_modelos_mensagem.sql` no Supabase (depois do 01).
-- **16/11 · Alinhamento à skill.** Migração renomeada (`20261116190000_fase1_prospeccao.sql`), com `grant` explícito, política por operação, `revoke` de `anon`, registro em `controle.migracoes` e arquivo `supabase/aplicar/`. Testada em Postgres local: banco novo, banco com dados, reaplicação recusada e teste de isolamento (anônimo, outro usuário, desfazer lote, schema de controle). Provado que a versão antiga, sem grants, dava "permission denied" para o usuário logado. Hospedagem trocada de Pages para Workers estáticos (`wrangler.jsonc`), com CSP em `dist/_headers`, testada sem violações. **Falta:** passos 1 a 5 acima.
-- **16/11 · Página de teste.** CRM publicado em modo demonstração no claude.ai (dados só no navegador). Testado: importar, recarregar, desfazer lote, celular sem rolagem lateral.
-- **16/11 · Produto, Fase 1.** Importar planilha do Outscraper, nota de oportunidade, descarte de redes, duplicados, lista com funil e filtros. Testado com as 2 planilhas reais (hamburguerias: 16 na fila; pizzarias: 7). Nenhuma planilha real vai para o Git.
+- Plataforma de cardápio vale +27, igual a "só iFood".
+- Redes e franquias são descartadas.
+- Nicho ainda em aberto: cada lote recebe o nicho na importação.
+- Outscraper: só o Raspador do Google Maps, sem enriquecimento.
+- Mensagem termina com uma pergunta, sem palavra-código.
+- Alta oportunidade a partir de 65.
+- Meta padrão de 12 mensagens por dia; limite de 3 pilotos.
+- **Em aberto:** rever os pesos da nota quando o nicho for escolhido (hoje favorecem quem não tem site).
+- **Em aberto:** Supabase gratuito ou Pro.
