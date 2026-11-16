@@ -31,6 +31,11 @@ npm test        # regras de importação e da nota
 npm run build   # confere os tipos e gera dist/
 ```
 
+## Testar sem instalar nada
+
+O CRM está publicado como página privada no claude.ai, em modo demonstração: https://claude.ai/artifact/DXDXtXK2N8wCkNhccwzVr3
+Os dados ficam só no navegador de quem abre (não vão para o Git nem para o Claude). Para gerar de novo a página única depois de mudar o código: `npm run build:pagina`.
+
 ## Ligar ao Supabase (uma vez)
 
 1. Crie um projeto em supabase.com (região São Paulo).

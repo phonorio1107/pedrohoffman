@@ -66,7 +66,7 @@ function Funil({ leads }: { leads: Lead[] }) {
   );
 }
 
-function exportarCsv(leads: Lead[]) {
+function exportarCsv(leads: Lead[]): Promise<string> {
   const csv = Papa.unparse(
     leads.map((l) => ({
       nome: l.nome,
@@ -91,6 +91,7 @@ function exportarCsv(leads: Lead[]) {
   const a = Object.assign(document.createElement('a'), { href: url, download: `leads-${new Date().toISOString().slice(0, 10)}.csv` });
   a.click();
   URL.revokeObjectURL(url);
+  return Promise.resolve('baixado');
 }
 
 export function Leads() {
@@ -99,6 +100,7 @@ export function Leads() {
   const [lotes, setLotes] = useState<Lote[]>([]);
   const [aberto, setAberto] = useState<string | null>(null);
   const [erro, setErro] = useState('');
+  const [aviso, setAviso] = useState('');
 
   const aba = params.get('aba') ?? 'fila';
   const busca = params.get('q') ?? '';
@@ -178,8 +180,14 @@ export function Leads() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Botao onClick={() => exportarCsv(visiveis)}>
-            <Download size={16} aria-hidden="true" /> Exportar CSV
+          <Botao
+            onClick={async () => {
+              const r = await exportarCsv(visiveis);
+              setAviso(r === 'copiado' ? 'CSV copiado: cole numa planilha.' : r === 'falhou' ? 'Não consegui copiar o CSV.' : '');
+              setTimeout(() => setAviso(''), 4000);
+            }}
+          >
+            <Download size={16} aria-hidden="true" /> {import.meta.env.VITE_ARTIFACT ? 'Copiar CSV' : 'Exportar CSV'}
           </Botao>
           <Link to="/importar" className={classeBotao('principal')}>
             <FileUp size={16} aria-hidden="true" /> Importar planilha
@@ -187,6 +195,11 @@ export function Leads() {
         </div>
       </div>
 
+      {aviso && (
+        <p role="status" className="mt-3 rounded-md bg-sucesso-fundo px-3 py-2 text-sm text-sucesso">
+          {aviso}
+        </p>
+      )}
       <div className="mt-6">
         <Funil leads={doLote} />
       </div>

@@ -111,14 +111,19 @@ interface Banco {
 const CHAVE = 'crm-ph-demo';
 
 function repositorioDemo(): Repositorio {
+  // Reserva na memória: se o navegador bloquear o armazenamento, a sessão continua funcionando.
+  let memoria: Banco = { nichos: [], lotes: [], leads: [] };
   const ler = (): Banco => {
     try {
-      return JSON.parse(localStorage.getItem(CHAVE) ?? '') as Banco;
+      const salvo = localStorage.getItem(CHAVE);
+      if (salvo) memoria = JSON.parse(salvo) as Banco;
     } catch {
-      return { nichos: [], lotes: [], leads: [] };
+      /* usa a memória */
     }
+    return memoria;
   };
   const gravar = (b: Banco) => {
+    memoria = b;
     try {
       localStorage.setItem(CHAVE, JSON.stringify(b));
     } catch {

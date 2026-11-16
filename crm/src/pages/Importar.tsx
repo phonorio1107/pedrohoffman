@@ -48,6 +48,7 @@ export function Importar() {
   const [erro, setErro] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [arrastando, setArrastando] = useState(false);
+  const [confirmando, setConfirmando] = useState<string | null>(null);
 
   const recarregar = () => {
     repo.leads().then(setExistentes);
@@ -99,7 +100,11 @@ export function Importar() {
   }
 
   async function desfazer(l: Lote) {
-    if (!confirm(`Desfazer o lote "${l.nome}"? Os leads que nasceram nele serão apagados.`)) return;
+    if (confirmando !== l.id) {
+      setConfirmando(l.id);
+      return;
+    }
+    setConfirmando(null);
     try {
       await repo.desfazerLote(l.id);
       recarregar();
@@ -282,9 +287,12 @@ export function Importar() {
                 {l.desfeito_em ? (
                   <Etiqueta>Desfeito em {dataBR(l.desfeito_em)}</Etiqueta>
                 ) : podeDesfazer(l) ? (
-                  <Botao variante="fantasma" className="h-8 px-2" onClick={() => desfazer(l)}>
-                    <Undo2 size={14} aria-hidden="true" /> Desfazer
-                  </Botao>
+                  <span className="flex items-center gap-2">
+                    {confirmando === l.id && <span className="text-xs text-erro">Apaga os leads deste lote.</span>}
+                    <Botao variante="fantasma" className={cn('h-8 px-2', confirmando === l.id && 'bg-erro-fundo text-erro')} onClick={() => desfazer(l)}>
+                      <Undo2 size={14} aria-hidden="true" /> {confirmando === l.id ? 'Confirmar' : 'Desfazer'}
+                    </Botao>
+                  </span>
                 ) : null}
               </div>
             ))}

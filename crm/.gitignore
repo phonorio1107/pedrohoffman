@@ -1,5 +1,6 @@
 node_modules/
 dist/
+dist-pagina/
 .env
 .env.local
 # Planilhas de leads nunca entram no Git (dados de empresas reais).

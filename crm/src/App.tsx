@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router-dom';
+
+// A página publicada no claude.ai só aceita rotas no hash (#/leads).
+const Roteador = import.meta.env.VITE_ARTIFACT ? HashRouter : BrowserRouter;
 import { Layout } from './components/Layout';
 import { repo } from './lib/dados';
 import { EmBreve } from './pages/EmBreve';
@@ -23,7 +26,7 @@ export default function App() {
   };
 
   return (
-    <BrowserRouter>
+    <Roteador>
       <Routes>
         <Route element={<Layout usuario={usuario} demo={repo.modo === 'demo'} onSair={sair} />}>
           <Route path="/" element={<Navigate to="/leads" replace />} />
@@ -35,6 +38,6 @@ export default function App() {
           <Route path="*" element={<Navigate to="/leads" replace />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </Roteador>
   );
 }
