@@ -7,6 +7,7 @@ import { Layout } from './components/Layout';
 import { repo } from './lib/dados';
 import { EmBreve } from './pages/EmBreve';
 import { Ficha } from './pages/Ficha';
+import { Hoje } from './pages/Hoje';
 import { Importar } from './pages/Importar';
 import { Leads } from './pages/Leads';
 import { Login } from './pages/Login';
@@ -31,14 +32,14 @@ export default function App() {
     <Roteador>
       <Routes>
         <Route element={<Layout usuario={usuario} demo={repo.modo === 'demo'} onSair={sair} />}>
-          <Route path="/" element={<Navigate to="/leads" replace />} />
+          <Route path="/" element={<Navigate to="/hoje" replace />} />
           <Route path="/leads" element={<Leads />} />
           <Route path="/leads/:id" element={<Ficha />} />
           <Route path="/importar" element={<Importar />} />
-          <Route path="/hoje" element={<EmBreve titulo="Hoje" fase="Fase 2" />} />
+          <Route path="/hoje" element={<Hoje />} />
           <Route path="/modelos" element={<Modelos />} />
           <Route path="/carteira" element={<EmBreve titulo="Carteira" fase="Fase 3" />} />
-          <Route path="*" element={<Navigate to="/leads" replace />} />
+          <Route path="*" element={<Navigate to="/hoje" replace />} />
         </Route>
       </Routes>
     </Roteador>

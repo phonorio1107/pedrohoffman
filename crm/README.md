@@ -13,7 +13,7 @@ Design aprovado: canvas "Sistema Pedro Hoffman" no claude.ai. Visual: design sys
 |---|---|---|
 | 1 | Projeto, banco com RLS, login, importação, nota de oportunidade, lista de leads com filtros | ✅ pronta |
 | 2 | Ficha do lead, modelos de mensagem, WhatsApp, histórico | ✅ entrega 1 |
-| 2 | Fila Hoje e versão para celular | ⬜ entrega 2 |
+| 2 | Fila Hoje e versão para celular | ✅ entrega 2 |
 | 3 | Carteira, ficha do cliente, contratos, pagamentos, ajustes, marcos, alertas | ⬜ |
 | 4 | Monitor dos sites dos clientes (Worker com cron), avisos de SSL e domínio | ⬜ |
 

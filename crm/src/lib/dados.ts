@@ -23,6 +23,7 @@ export interface Repositorio {
   lead(id: string): Promise<Lead | null>;
   atualizarLead(id: string, mudanca: AtualizacaoLead): Promise<Lead>;
   eventos(leadId: string): Promise<EventoLead[]>;
+  eventosDesde(desde: string, tipo: TipoEvento): Promise<EventoLead[]>;
   registrarEvento(leadId: string, tipo: TipoEvento, texto: string | null): Promise<void>;
   modelos(): Promise<Modelo[]>;
   salvarModelo(m: { nicho_id: string | null; canal: Canal; nome: string; texto: string }): Promise<Modelo>;
@@ -115,6 +116,9 @@ function repositorioSupabase(sb: SupabaseClient): Repositorio {
     },
     async registrarEvento(leadId, tipo, texto) {
       ok(await sb.from('eventos_lead').insert({ lead_id: leadId, tipo, texto }));
+    },
+    async eventosDesde(desde, tipo) {
+      return ok(await sb.from('eventos_lead').select('id, lead_id, tipo, texto, criado_em').eq('tipo', tipo).gte('criado_em', desde)) as EventoLead[];
     },
     async modelos() {
       return ok(await sb.from('modelos_mensagem').select('id, nicho_id, canal, nome, texto')) as Modelo[];
@@ -246,6 +250,9 @@ function repositorioDemo(): Repositorio {
       return ler()
         .eventos.filter((e) => e.lead_id === leadId)
         .sort((a, b) => b.criado_em.localeCompare(a.criado_em));
+    },
+    async eventosDesde(desde, tipo) {
+      return ler().eventos.filter((e) => e.tipo === tipo && e.criado_em >= desde);
     },
     async registrarEvento(leadId, tipo, texto) {
       const b = ler();

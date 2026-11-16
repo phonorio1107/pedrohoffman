@@ -8,7 +8,7 @@ Sistema **interno** de prospecção e carteira. Usuário único: Pedro. Não é 
 - **Nota sobre a skill `novo-cliente-saas`:** a cópia sincronizada só trouxe o `SKILL.md`. As referências (`fases.md`, `banco.md`, `testes.md`, `manutencao.md`, `licoes.md`) e os scripts (`migrar.sh`) não vieram. Este arquivo e os scripts de banco foram montados a partir do resumo do `SKILL.md`. Se as referências existirem em outro lugar, conferir e ajustar.
 
 ## Fase atual
-**Fase 6 (construir) em andamento: Fase 1 do produto pronta e Fase 2, entrega 1 (ficha do lead, mensagem, WhatsApp, histórico, modelos) pronta.** Falta a entrega 2 (fila Hoje e versão para celular). Bloqueio para dado real: Supabase ainda não criado (Pedro) e repositório ainda público.
+**Fase 6 (construir) em andamento: Fases 1 e 2 do produto prontas** (importar, nota, lista, ficha, mensagem, WhatsApp, histórico, modelos, fila Hoje e celular). Próxima: Fase 3 do produto (carteira). Bloqueio para dado real: Supabase ainda não criado (Pedro) e repositório ainda público.
 
 ## Decisões
 | Data | Decisão |
@@ -22,6 +22,8 @@ Sistema **interno** de prospecção e carteira. Usuário único: Pedro. Não é 
 | 16/11 | Sem nicho definido: o CRM é genérico; modelo de mensagem por nicho, com um modelo geral para sistema sob medida enquanto não há nicho |
 | 16/11 | Abordagem padrão: pergunta curta sobre a rotina (pedidos, orçamentos, agenda) e pedido de licença para mandar uma prévia. **Sem palavra-código** ("DOR" é para os posts; aqui o Pedro é quem procura) |
 | 16/11 | Fase 2 do produto em duas entregas: 1) ficha + mensagem + histórico; 2) fila Hoje + celular |
+| 16/11 | Fila Hoje: retornos vencidos primeiro, depois quem respondeu (mandar prévia), depois primeiros contatos por nota até a meta. Meta padrão 12, guardada no aparelho; limite de 3 pilotos só avisa, não bloqueia |
+| 16/11 | O CRM abre na tela Hoje |
 | 16/11 | Seguir o padrão da skill `novo-cliente-saas` (Workers estáticos, grants explícitos, PROJETO.md) |
 | **em aberto** | Onde fica o Supabase: conta do Pedro, plano gratuito ou Pro? (Gratuito: sem backup automático e pausa após 1 semana sem uso) |
 | **em aberto** | Pesos da nota de oportunidade: hoje favorecem quem não tem site; para sistema sob medida, rever quando o nicho for escolhido |
@@ -36,7 +38,7 @@ Sistema **interno** de prospecção e carteira. Usuário único: Pedro. Não é 
 | 3 | Contas e repositório | 🟨 repositório `[x]`; Supabase `[ ]` (Pedro); Cloudflare `[ ]` (Pedro); repositório privado `[ ]` (Pedro) |
 | 4 | Banco e RLS | 🟨 `[x]` migração com RLS, uma política por operação e grants, testada num Postgres 16 local (banco novo e banco com dados) pelo `scripts/testar-banco.sh`. `[ ]` aplicada no Supabase real (Pedro) |
 | 5 | Login e permissões | 🟨 `[x]` tela de login e Supabase Auth no código. `[ ]` testado com Supabase real; `[ ]` cadastro público desligado (Pedro) |
-| 6 | Construir o sistema | 🟨 Fase 1 do produto `[x]` (importação, nota, lista). Fases 2, 3 e 4 do produto `[ ]` |
+| 6 | Construir o sistema | 🟨 Fases 1 e 2 do produto `[x]` (importação, nota, lista, ficha, modelos, fila Hoje, celular). Fases 3 e 4 do produto `[ ]` |
 | 7 | Design | 🟨 `[x]` visual Degrau aplicado, um botão principal por tela. `[ ]` `npm run auditoria` (contraste, formatos, nos dois temas) não existe ainda neste projeto; tema escuro `[ ]` dispensado por ora (CRM só claro) |
 | 8 | Domínio, e-mail próprio e cabeçalhos | 🟨 `[x]` `_headers` com CSP gerado no build, testado sem violações. `[ ]` domínio próprio; e-mail próprio n/a (CRM não envia e-mail) |
 | 9 | LGPD | 🟨 Dados de empresas públicas do Google Maps; mensagens personalizadas, poucas por dia. `[ ]` registrar como o Pedro atende pedido de "não me contate" (campo no lead, Fase 2 do produto) |
@@ -52,6 +54,7 @@ Sistema **interno** de prospecção e carteira. Usuário único: Pedro. Não é 
 5. Criar o app no Cloudflare e colar as duas variáveis `VITE_SUPABASE_*`.
 
 ## Histórico (mais recente em cima)
+- **16/11 · Produto, Fase 2, entrega 2.** Tela Hoje: meta do dia em degraus (mensagens enviadas hoje, sem contar repetidas), pilotos ativos de 3, fila com retornos vencidos, prévias e primeiros contatos, filtros. Ficha no celular: mensagem primeiro, barra fixa com Pular, Copiar e Abrir no WhatsApp acima das abas; ao voltar do WhatsApp pergunta "Mandou a mensagem?" (cobrar em 1, 2 ou 4 dias) e segue para o próximo lead. Corrigido de passagem: datas sem horário apareciam com um dia a menos (fuso). Testes: `vitest` 18, navegador 16 verificações no celular (iPhone 13) e 15 no computador, sem erros no console nem rolagem lateral. Sem mudança no banco. **Falta:** nada novo do Pedro além dos passos do Supabase.
 - **16/11 · Produto, Fase 2, entrega 1.** Ficha do lead (`/leads/:id`): nota com motivos, dados do Maps, mensagem pronta por canal (WhatsApp, Direct, E-mail) com os dados do lead destacados, botão "Abrir no WhatsApp" (`wa.me`), Copiar, "Marquei como enviada" (status Contatado + cobrança em 1, 2 ou 4 dias), status, próximo passo com data, observações e histórico. Tela de Modelos (por nicho e canal, com prévia de lead inventado). Horário do Maps traduzido (ex.: "Seg 11h–14h15 e 18h–22h30"). Migração `20261116200000_fase2_modelos_mensagem.sql` (grants, RLS, índice único) testada em Postgres local: banco novo, banco com dados e isolamento entre usuários, incluindo a tabela nova. Testado no navegador (15 verificações, computador e celular) e `vitest` com 14 testes. Bug achado e corrigido nos testes: o próximo passo não atualizava na tela depois de "Marquei como enviada". **Falta:** o Pedro rodar `supabase/aplicar/02-fase2_modelos_mensagem.sql` no Supabase (depois do 01).
 - **16/11 · Alinhamento à skill.** Migração renomeada (`20261116190000_fase1_prospeccao.sql`), com `grant` explícito, política por operação, `revoke` de `anon`, registro em `controle.migracoes` e arquivo `supabase/aplicar/`. Testada em Postgres local: banco novo, banco com dados, reaplicação recusada e teste de isolamento (anônimo, outro usuário, desfazer lote, schema de controle). Provado que a versão antiga, sem grants, dava "permission denied" para o usuário logado. Hospedagem trocada de Pages para Workers estáticos (`wrangler.jsonc`), com CSP em `dist/_headers`, testada sem violações. **Falta:** passos 1 a 5 acima.
 - **16/11 · Página de teste.** CRM publicado em modo demonstração no claude.ai (dados só no navegador). Testado: importar, recarregar, desfazer lote, celular sem rolagem lateral.

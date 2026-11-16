@@ -1,7 +1,7 @@
 import { addDays, format } from 'date-fns';
-import { ArrowLeft, Copy, ExternalLink, Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, ChevronRight, Copy, ExternalLink, Mail, MapPin, MessageCircle, Phone, Send, SkipForward } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Botao, classeBotao } from '@/components/ui/botao';
 import { Campo, Rotulo, Selecao } from '@/components/ui/campo';
 import { Cartao } from '@/components/ui/cartao';
@@ -9,6 +9,7 @@ import { Etiqueta, type Tom } from '@/components/ui/etiqueta';
 import { repo } from '@/lib/dados';
 import { formatarHorario } from '@/lib/horario';
 import { MODELOS_PADRAO, partesDaMensagem, preencher, valoresDoLead } from '@/lib/mensagem';
+import { estaNaFila, proximoDaFila } from '@/lib/sessao';
 import { formatarTelefone, linkWhatsApp } from '@/lib/telefone';
 import { CANAIS, ROTULO_PRESENCA, STATUS, type AtualizacaoLead, type Canal, type EventoLead, type Lead, type Modelo, type Nicho, type Status, type TipoEvento } from '@/lib/tipos';
 import { cn, dataBR, numeroBR } from '@/lib/utils';
@@ -41,6 +42,32 @@ export function Ficha() {
   const [dataPasso, setDataPasso] = useState('');
   const [obs, setObs] = useState('');
   const [cobrarEm, setCobrarEm] = useState('2');
+  const [perguntar, setPerguntar] = useState(false);
+  const abriuWhatsApp = useRef(false);
+  const navegar = useNavigate();
+  const naFila = estaNaFila(id);
+  const proximo = proximoDaFila(id);
+  const irParaProximo = () => navegar(proximo ? `/leads/${proximo}` : '/hoje');
+
+  // Ao voltar do WhatsApp (a aba volta a ficar visível), pergunta se a mensagem foi enviada.
+  useEffect(() => {
+    const voltou = () => {
+      if (document.visibilityState === 'visible' && abriuWhatsApp.current) {
+        abriuWhatsApp.current = false;
+        setPerguntar(true);
+      }
+    };
+    document.addEventListener('visibilitychange', voltou);
+    window.addEventListener('focus', voltou);
+    return () => {
+      document.removeEventListener('visibilitychange', voltou);
+      window.removeEventListener('focus', voltou);
+    };
+  }, []);
+  useEffect(() => {
+    setPerguntar(false);
+    abriuWhatsApp.current = false;
+  }, [id]);
 
   const carregar = useCallback(async () => {
     try {
@@ -140,10 +167,17 @@ export function Ficha() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <Link to="/leads" className="inline-flex items-center gap-1 text-sm text-grafite hover:text-tinta">
-        <ArrowLeft size={16} aria-hidden="true" /> Leads
-      </Link>
+    <div className="mx-auto max-w-6xl pb-24 md:pb-0">
+      <div className="flex items-center justify-between gap-3">
+        <Link to={naFila ? '/hoje' : '/leads'} className="inline-flex items-center gap-1 text-sm text-grafite hover:text-tinta">
+          <ArrowLeft size={16} aria-hidden="true" /> {naFila ? 'Hoje' : 'Leads'}
+        </Link>
+        {naFila && (
+          <button onClick={irParaProximo} className="hidden items-center gap-1 text-sm text-grafite hover:text-tinta md:inline-flex">
+            {proximo ? 'Próximo da fila' : 'Voltar para a fila'} <ChevronRight size={16} aria-hidden="true" />
+          </button>
+        )}
+      </div>
 
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
@@ -170,8 +204,9 @@ export function Ficha() {
       )}
       {lead.motivo_descarte && lead.status === 'Descartado' && <p className="mt-3 text-sm text-cinza">Motivo: {lead.motivo_descarte}</p>}
 
+      {/* No celular a mensagem vem primeiro; nota e dados do Maps descem. */}
       <div className="mt-6 grid gap-6 lg:grid-cols-[340px_1fr]">
-        <div className="flex min-w-0 flex-col gap-6">
+        <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
           <div className="rounded-cartao bg-tinta p-5 text-white">
             <p className="text-xs uppercase tracking-[0.1em] text-[#C3C3CA]">Nota de oportunidade</p>
             <p className="num font-titulo text-5xl font-bold">{lead.nota_oportunidade}</p>
@@ -254,7 +289,7 @@ export function Ficha() {
           </Cartao>
         </div>
 
-        <div className="flex min-w-0 flex-col gap-6">
+        <div className="order-1 flex min-w-0 flex-col gap-6 lg:order-2">
           <Cartao className="p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-lg font-semibold">Mensagem pronta</h2>
@@ -295,16 +330,22 @@ export function Ficha() {
             )}
             <div className="mt-4 flex flex-wrap gap-2">
               {canal === 'WhatsApp' && tel && (
-                <a className={classeBotao('principal')} href={linkWhatsApp(tel, pronta.texto)} target="_blank" rel="noreferrer">
+                <a
+                  className={classeBotao('principal', 'hidden md:inline-flex')}
+                  href={linkWhatsApp(tel, pronta.texto)}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => (abriuWhatsApp.current = true)}
+                >
                   <MessageCircle size={16} aria-hidden="true" /> Abrir no WhatsApp
                 </a>
               )}
               {canal === 'Direct' && lead.instagram && (
-                <a className={classeBotao('principal')} href={lead.instagram} target="_blank" rel="noreferrer">
+                <a className={classeBotao('principal', 'hidden md:inline-flex')} href={lead.instagram} target="_blank" rel="noreferrer">
                   <ExternalLink size={16} aria-hidden="true" /> Abrir o Instagram
                 </a>
               )}
-              <Botao onClick={copiar}>
+              <Botao onClick={copiar} className="hidden md:inline-flex">
                 <Copy size={16} aria-hidden="true" /> Copiar
               </Botao>
             </div>
@@ -379,6 +420,82 @@ export function Ficha() {
           </Cartao>
         </div>
       </div>
+
+      <div
+        className="fixed inset-x-0 z-20 flex gap-2 border-t border-nevoa bg-papel px-4 py-3 md:hidden"
+        style={{ bottom: 'calc(57px + env(safe-area-inset-bottom, 0px))' }}
+      >
+        {naFila && (
+          <Botao onClick={irParaProximo} className="px-3" aria-label="Pular para o próximo lead">
+            <SkipForward size={18} aria-hidden="true" /> Pular
+          </Botao>
+        )}
+        <Botao onClick={copiar} className="px-3" aria-label="Copiar a mensagem">
+          <Copy size={18} aria-hidden="true" />
+          {naFila ? '' : 'Copiar'}
+        </Botao>
+        {canal === 'WhatsApp' && tel ? (
+          <a
+            className={classeBotao('principal', 'h-12 flex-1 text-base')}
+            href={linkWhatsApp(tel, pronta.texto)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => (abriuWhatsApp.current = true)}
+          >
+            <MessageCircle size={18} aria-hidden="true" /> Abrir no WhatsApp
+          </a>
+        ) : canal === 'Direct' && lead.instagram ? (
+          <a className={classeBotao('principal', 'h-12 flex-1 text-base')} href={lead.instagram} target="_blank" rel="noreferrer">
+            <ExternalLink size={18} aria-hidden="true" /> Abrir o Instagram
+          </a>
+        ) : (
+          <Botao variante="principal" onClick={copiar} className="h-12 flex-1 text-base">
+            <Copy size={18} aria-hidden="true" /> Copiar mensagem
+          </Botao>
+        )}
+      </div>
+
+      {perguntar && (
+        <div className="fixed inset-0 z-30 flex items-end justify-center bg-tinta/50 p-4 sm:items-center" role="presentation">
+          <div role="dialog" aria-modal="true" aria-labelledby="pergunta-titulo" className="w-full max-w-sm rounded-cartao bg-papel p-5">
+            <h2 id="pergunta-titulo" className="text-xl font-semibold">
+              Mandou a mensagem?
+            </h2>
+            <p className="mt-1 text-sm text-grafite">Se mandou, eu registro no histórico e agendo a cobrança.</p>
+            <div className="mt-4">
+              <Rotulo htmlFor="cobrar-volta">Se não responder, cobrar em</Rotulo>
+              <div id="cobrar-volta" className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Cobrar em">
+                {['1', '2', '4'].map((d) => (
+                  <button
+                    key={d}
+                    role="radio"
+                    aria-checked={cobrarEm === d}
+                    onClick={() => setCobrarEm(d)}
+                    className={cn('h-11 rounded-campo border text-sm font-semibold', cobrarEm === d ? 'border-tinta bg-tinta text-white' : 'border-[#8A8A92] bg-papel')}
+                  >
+                    {d} dia{d === '1' ? '' : 's'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="mt-5 flex flex-col gap-2">
+              <Botao
+                variante="principal"
+                className="h-12 text-base"
+                autoFocus
+                onClick={async () => {
+                  setPerguntar(false);
+                  await marcarEnviada();
+                  if (naFila) irParaProximo();
+                }}
+              >
+                {naFila ? (proximo ? 'Sim, próximo lead' : 'Sim, voltar para a fila') : 'Sim, registrar'}
+              </Botao>
+              <Botao onClick={() => setPerguntar(false)}>Ainda não</Botao>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

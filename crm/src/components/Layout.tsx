@@ -1,18 +1,20 @@
-import { CalendarCheck, FileUp, LogOut, MessageSquareText, Users, Wallet } from 'lucide-react';
+import { CalendarCheck, FileUp, LogOut, MessageSquareText, Users, Wallet, type LucideIcon } from 'lucide-react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Logo } from './Simbolo';
 
-const PROSPECCAO = [
-  { para: '/hoje', rotulo: 'Hoje', icone: CalendarCheck, emBreve: true },
+type ItemNav = { para: string; rotulo: string; icone: LucideIcon; emBreve?: boolean };
+
+const PROSPECCAO: ItemNav[] = [
+  { para: '/hoje', rotulo: 'Hoje', icone: CalendarCheck },
   { para: '/leads', rotulo: 'Leads', icone: Users },
   { para: '/importar', rotulo: 'Importar planilha', icone: FileUp },
   { para: '/modelos', rotulo: 'Modelos de mensagem', icone: MessageSquareText },
 ];
-const CLIENTES = [{ para: '/carteira', rotulo: 'Carteira', icone: Wallet, emBreve: true }];
+const CLIENTES: ItemNav[] = [{ para: '/carteira', rotulo: 'Carteira', icone: Wallet, emBreve: true }];
 const ABAS = [PROSPECCAO[0], PROSPECCAO[1], PROSPECCAO[2], CLIENTES[0]];
 
-function Item({ para, rotulo, icone: Icone, emBreve }: (typeof PROSPECCAO)[number]) {
+function Item({ para, rotulo, icone: Icone, emBreve }: ItemNav) {
   return (
     <NavLink
       to={para}
