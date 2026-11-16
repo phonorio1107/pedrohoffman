@@ -1,0 +1,11 @@
+query,name,type,phone,website,address,county,city,rating,reviews,location_link,place_id,business_status,email,working_hours_csv_compatible
+"hamburgueria, Jundiaí",Burger do Bairro,Hamburger restaurant,+55 11 98888-1111,,"R. Exemplo, 10 - Centro, Jundiaí - SP",Centro,Jundiaí,4.8,1312,https://maps.google.com/?cid=1,ID-001,OPERATIONAL,,Monday,6,11PM
+"hamburgueria, Jundiaí",Smash Exemplo,Hamburger restaurant,+55 11 97777-2222,https://app.cardapioweb.com/smashexemplo,"R. Teste, 20 - Vila Arens, Jundiaí - SP",Vila Arens,Jundiaí,4.6,520,https://maps.google.com/?cid=2,ID-002,OPERATIONAL,contato@cardapioweb.com,
+"hamburgueria, Jundiaí",Lanches Modelo,Hamburger restaurant,+55 11 4500-3333,https://www.instagram.com/lanchesmodelo,"Av. Modelo, 30 - Anhangabaú, Jundiaí - SP",Anhangabaú,Jundiaí,4.2,80,https://maps.google.com/?cid=3,ID-003,OPERATIONAL,,
+"hamburgueria, Jundiaí",Rede Fictícia Burgers,Hamburger restaurant,+55 11 3000-4444,https://www.redeficticia.com.br,"Shopping A - Jundiaí - SP",Centro,Jundiaí,4.5,900,https://maps.google.com/?cid=4,ID-004,OPERATIONAL,,
+"hamburgueria, Jundiaí",Rede Fictícia Burgers,Hamburger restaurant,+55 11 3000-5555,https://www.redeficticia.com.br,"Shopping B - Jundiaí - SP",Eloy Chaves,Jundiaí,4.4,700,https://maps.google.com/?cid=5,ID-005,OPERATIONAL,,
+"hamburgueria, Jundiaí",Madero Exemplo,Hamburger restaurant,+55 11 3000-6666,https://www.restaurantemadero.com.br,"Av. Brasil, 1 - Jundiaí - SP",Centro,Jundiaí,4.7,3000,https://maps.google.com/?cid=6,ID-006,OPERATIONAL,,
+"hamburgueria, Jundiaí",Burger Sem Contato,Hamburger restaurant,,,"R. Sem Fone, 7 - Jundiaí - SP",Retiro,Jundiaí,4.9,40,https://maps.google.com/?cid=7,ID-007,OPERATIONAL,,
+"hamburgueria, Jundiaí",Burger Fechado,Hamburger restaurant,+55 11 96666-7777,,"R. Fim, 8 - Jundiaí - SP",Centro,Jundiaí,4.0,10,https://maps.google.com/?cid=8,ID-008,CLOSED_PERMANENTLY,,
+"hamburgueria, Jundiaí",Burger do Bairro,Hamburger restaurant,+55 11 98888-1111,,"R. Exemplo, 10 - Centro, Jundiaí - SP",Centro,Jundiaí,4.8,1312,https://maps.google.com/?cid=1,ID-001,OPERATIONAL,,
+"hamburgueria, Jundiaí",Casa Própria Burger,Hamburger restaurant,+55 11 95555-8888,https://casapropriaburger.com.br,"R. Própria, 9 - Jundiaí - SP",Ponte São João,Jundiaí,4.3,120,https://maps.google.com/?cid=9,ID-009,OPERATIONAL,ola@casapropriaburger.com.br,

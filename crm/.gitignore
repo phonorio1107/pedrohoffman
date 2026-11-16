@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.local
+# Planilhas de leads nunca entram no Git (dados de empresas reais).
+*.csv
+*.xlsx
+*.xls
+!src/lib/__fixtures__/*.csv
+*.tsbuildinfo

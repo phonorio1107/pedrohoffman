@@ -1,0 +1,18 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter-tight/500.css';
+@import '@fontsource/inter-tight/600.css';
+@import '@fontsource/inter-tight/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-fundo font-sans text-tinta antialiased; }
+  h1, h2, h3 { @apply font-titulo tracking-[-0.03em]; }
+  .num { font-variant-numeric: tabular-nums; }
+  :focus-visible { outline: 2px solid #0B1F3A; outline-offset: 2px; }
+}

@@ -14,6 +14,7 @@ Tudo em texto simples (Markdown) para o Claude ler e escrever junto com você.
 | `conteudo/posts/` | Uma pasta por peça (arte, vídeo, legenda) | `post.json`, `video.json`, `legenda.md` |
 | `rotina/` | Semana padrão, demandas e automações | `semana.md`, `demandas.md`, `automacoes.md` |
 | `motor/` | Gera carrosséis, stories e Reels no visual Degrau | `motor/README.md` |
+| `crm/` | CRM interno: importa leads do Google Maps, nota de oportunidade, fila e (em breve) carteira | `crm/README.md` |
 
 ## Como usar no dia a dia
 

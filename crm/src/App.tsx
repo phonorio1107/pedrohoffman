@@ -1,0 +1,40 @@
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { Layout } from './components/Layout';
+import { repo } from './lib/dados';
+import { EmBreve } from './pages/EmBreve';
+import { Importar } from './pages/Importar';
+import { Leads } from './pages/Leads';
+import { Login } from './pages/Login';
+
+export default function App() {
+  const [usuario, setUsuario] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    repo.usuario().then(setUsuario).catch(() => setUsuario(null));
+  }, []);
+
+  if (usuario === undefined) return null;
+  if (!usuario) return <Login onEntrar={setUsuario} />;
+
+  const sair = async () => {
+    await repo.sair();
+    setUsuario(null);
+  };
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout usuario={usuario} demo={repo.modo === 'demo'} onSair={sair} />}>
+          <Route path="/" element={<Navigate to="/leads" replace />} />
+          <Route path="/leads" element={<Leads />} />
+          <Route path="/importar" element={<Importar />} />
+          <Route path="/hoje" element={<EmBreve titulo="Hoje" fase="Fase 2" />} />
+          <Route path="/modelos" element={<EmBreve titulo="Modelos de mensagem" fase="Fase 2" />} />
+          <Route path="/carteira" element={<EmBreve titulo="Carteira" fase="Fase 3" />} />
+          <Route path="*" element={<Navigate to="/leads" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
