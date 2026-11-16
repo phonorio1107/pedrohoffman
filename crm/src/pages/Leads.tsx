@@ -7,6 +7,7 @@ import { Campo, Selecao } from '@/components/ui/campo';
 import { Cartao } from '@/components/ui/cartao';
 import { Etiqueta, type Tom } from '@/components/ui/etiqueta';
 import { repo } from '@/lib/dados';
+import { formatarHorario } from '@/lib/horario';
 import { formatarTelefone, linkWhatsApp } from '@/lib/telefone';
 import { PRESENCAS, ROTULO_PRESENCA, type Faixa, type Lead, type Lote, type Status } from '@/lib/tipos';
 import { cn, dataBR, numeroBR } from '@/lib/utils';
@@ -285,7 +286,9 @@ export function Leads() {
                 <Fragment key={l.id}>
                   <tr className={cn('border-t border-nevoa align-top hover:bg-fundo/60', aberto === l.id && 'bg-fundo/60')}>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-tinta">{l.nome}</p>
+                      <Link to={`/leads/${l.id}`} className="font-medium text-tinta underline-offset-2 hover:underline">
+                        {l.nome}
+                      </Link>
                       <p className="text-xs text-cinza">{[l.categoria, l.bairro, l.cidade].filter(Boolean).join(' · ')}</p>
                     </td>
                     <td className="px-4 py-3">
@@ -359,7 +362,7 @@ export function Leads() {
                                 <MapPin size={15} className="mt-0.5 shrink-0" aria-hidden="true" /> {l.endereco}
                               </p>
                             )}
-                            {l.horario && <p className="text-xs text-cinza">Horário: {l.horario.replaceAll('|', ' · ')}</p>}
+                            {l.horario && <p className="text-xs text-cinza">Horário: {formatarHorario(l.horario) ?? l.horario}</p>}
                             <div className="flex flex-wrap gap-2 pt-1">
                               {l.telefone_normalizado && (
                                 <a className="inline-flex items-center gap-1 rounded-md border border-nevoa px-2 py-1 hover:bg-fundo" href={linkWhatsApp(l.telefone_normalizado)} target="_blank" rel="noreferrer">
@@ -382,7 +385,9 @@ export function Leads() {
                                 </a>
                               )}
                             </div>
-                            <p className="pt-1 text-xs text-cinza">A ficha completa, com mensagem pronta e histórico, chega na Fase 2.</p>
+                            <Link to={`/leads/${l.id}`} className={classeBotao('secundario', 'mt-2 h-9')}>
+                              Abrir ficha e mensagem
+                            </Link>
                           </div>
                         </div>
                       </td>

@@ -11,6 +11,7 @@ insert into public.lotes (id, dono, nome, arquivo) values ('22222222-0000-0000-0
 insert into public.leads (id, dono, lote_id, nome, presenca, faixa, place_id)
   values ('33333333-0000-0000-0000-000000000001', :A, '22222222-0000-0000-0000-000000000001', 'Lead do A', 'sem_site', 'Alta', 'ID-A');
 insert into public.eventos_lead (dono, lead_id, tipo) values (:A, '33333333-0000-0000-0000-000000000001', 'importado');
+insert into public.modelos_mensagem (dono, canal, nome, texto) values (:A, 'WhatsApp', 'Geral do A', 'Oi, {{nome}}');
 
 create or replace function pg_temp.deve_falhar(sql text, esperado text) returns void language plpgsql as $$
 begin
@@ -29,6 +30,7 @@ grant execute on function pg_temp.exigir(boolean, text) to public;
 set role anon;
 select pg_temp.deve_falhar('select * from public.leads', 'permission denied');
 select pg_temp.deve_falhar('select * from public.nichos', 'permission denied');
+select pg_temp.deve_falhar('select * from public.modelos_mensagem', 'permission denied');
 select pg_temp.deve_falhar('select public.desfazer_lote(''22222222-0000-0000-0000-000000000001'')', 'permission denied');
 reset role;
 
@@ -40,12 +42,18 @@ do $$ declare n int; begin
   select count(*) into n from public.lotes;         if n <> 0 then raise exception 'B viu lote do A'; end if;
   select count(*) into n from public.nichos;        if n <> 0 then raise exception 'B viu nicho do A'; end if;
   select count(*) into n from public.eventos_lead;  if n <> 0 then raise exception 'B viu evento do A'; end if;
+  select count(*) into n from public.modelos_mensagem; if n <> 0 then raise exception 'B viu modelo do A'; end if;
+  update public.modelos_mensagem set texto = 'invadido';
+  get diagnostics n = row_count;                    if n <> 0 then raise exception 'B alterou modelo do A'; end if;
+  delete from public.modelos_mensagem;
+  get diagnostics n = row_count;                    if n <> 0 then raise exception 'B apagou modelo do A'; end if;
   update public.leads set nome = 'invadido' where id = '33333333-0000-0000-0000-000000000001';
   get diagnostics n = row_count;                    if n <> 0 then raise exception 'B alterou lead do A'; end if;
   delete from public.leads where id = '33333333-0000-0000-0000-000000000001';
   get diagnostics n = row_count;                    if n <> 0 then raise exception 'B apagou lead do A'; end if;
 end $$;
 select pg_temp.deve_falhar('insert into public.leads (dono, nome, presenca, faixa) values (''aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'', ''x'', ''sem_site'', ''Alta'')', 'row-level security');
+select pg_temp.deve_falhar('insert into public.modelos_mensagem (dono, canal, nome, texto) values (''aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'', ''Direct'', ''x'', ''y'')', 'row-level security');
 select pg_temp.deve_falhar('select public.desfazer_lote(''22222222-0000-0000-0000-000000000001'')', 'não encontrado');
 reset role;
 
@@ -58,6 +66,11 @@ do $$ declare n int; begin
   update public.leads set status = 'Contatado' where place_id = 'ID-A2';
   get diagnostics n = row_count;                    if n <> 1 then raise exception 'A não conseguiu atualizar'; end if;
 end $$;
+-- modelo: um por canal no nível geral; o mesmo canal com nicho é outro modelo
+select pg_temp.deve_falhar('insert into public.modelos_mensagem (canal, nome, texto) values (''WhatsApp'', ''duplicado'', ''x'')', 'modelos_unico');
+insert into public.nichos (id, nome) values ('11111111-0000-0000-0000-000000000002', 'Outro nicho');
+insert into public.modelos_mensagem (nicho_id, canal, nome, texto) values ('11111111-0000-0000-0000-000000000002', 'WhatsApp', 'Do nicho', 'Oi');
+select pg_temp.deve_falhar('insert into public.modelos_mensagem (canal, nome, texto) values (''Direct'', ''x'', '''')', 'check constraint');
 -- place_id repetido para o mesmo dono é recusado
 select pg_temp.deve_falhar('insert into public.leads (nome, presenca, faixa, place_id) values (''dup'', ''sem_site'', ''Alta'', ''ID-A'')', 'leads_place_id_unico');
 -- regras de domínio

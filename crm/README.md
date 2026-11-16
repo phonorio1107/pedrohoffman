@@ -12,7 +12,8 @@ Design aprovado: canvas "Sistema Pedro Hoffman" no claude.ai. Visual: design sys
 | Fase | O quê | Status |
 |---|---|---|
 | 1 | Projeto, banco com RLS, login, importação, nota de oportunidade, lista de leads com filtros | ✅ pronta |
-| 2 | Ficha do lead, modelos de mensagem, WhatsApp, histórico, fila Hoje, celular | ⬜ |
+| 2 | Ficha do lead, modelos de mensagem, WhatsApp, histórico | ✅ entrega 1 |
+| 2 | Fila Hoje e versão para celular | ⬜ entrega 2 |
 | 3 | Carteira, ficha do cliente, contratos, pagamentos, ajustes, marcos, alertas | ⬜ |
 | 4 | Monitor dos sites dos clientes (Worker com cron), avisos de SSL e domínio | ⬜ |
 
@@ -41,7 +42,7 @@ Os dados ficam só no navegador de quem abre (não vão para o Git nem para o Cl
 ## Ligar ao Supabase (uma vez)
 
 1. Crie um projeto em supabase.com (região São Paulo).
-2. **SQL Editor > New query**: cole o conteúdo de `supabase/aplicar/01-fase1_prospeccao.sql` e clique em **Run** (se aparecer "Run and enable RLS", confirme). Rodar duas vezes é recusado de propósito.
+2. **SQL Editor > New query**: cole o conteúdo de `supabase/aplicar/01-fase1_prospeccao.sql`, depois o de `02-fase2_modelos_mensagem.sql` (um de cada vez, nessa ordem), e clique em **Run** (se aparecer "Run and enable RLS", confirme). Rodar duas vezes é recusado de propósito.
 3. **Authentication > Users > Add user**: crie o seu usuário com e-mail e senha (marque "Auto Confirm User").
 4. **Authentication > Sign In / Providers**: desligue "Allow new users to sign up". Assim ninguém mais cria conta.
 5. **Project Settings > API**: copie a URL e a chave `anon` para um arquivo `.env` (modelo em `.env.example`).

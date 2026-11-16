@@ -87,3 +87,26 @@ export interface Lead extends DadosLead {
   criado_em: string;
   atualizado_em: string;
 }
+
+export const CANAIS = ['WhatsApp', 'Direct', 'E-mail'] as const;
+export type Canal = (typeof CANAIS)[number];
+
+export interface Modelo {
+  id: string;
+  nicho_id: string | null;
+  canal: Canal;
+  nome: string;
+  texto: string;
+}
+
+export type TipoEvento = 'importado' | 'atualizado' | 'mensagem enviada' | 'respondeu' | 'prévia enviada' | 'status alterado' | 'observação';
+
+export interface EventoLead {
+  id: string;
+  lead_id: string;
+  tipo: TipoEvento;
+  texto: string | null;
+  criado_em: string;
+}
+
+export type AtualizacaoLead = Partial<Pick<Lead, 'status' | 'motivo_descarte' | 'proximo_passo' | 'data_proximo_passo' | 'observacoes'>>;

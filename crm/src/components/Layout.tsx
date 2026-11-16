@@ -7,7 +7,7 @@ const PROSPECCAO = [
   { para: '/hoje', rotulo: 'Hoje', icone: CalendarCheck, emBreve: true },
   { para: '/leads', rotulo: 'Leads', icone: Users },
   { para: '/importar', rotulo: 'Importar planilha', icone: FileUp },
-  { para: '/modelos', rotulo: 'Modelos de mensagem', icone: MessageSquareText, emBreve: true },
+  { para: '/modelos', rotulo: 'Modelos de mensagem', icone: MessageSquareText },
 ];
 const CLIENTES = [{ para: '/carteira', rotulo: 'Carteira', icone: Wallet, emBreve: true }];
 const ABAS = [PROSPECCAO[0], PROSPECCAO[1], PROSPECCAO[2], CLIENTES[0]];

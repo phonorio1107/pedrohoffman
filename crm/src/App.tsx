@@ -6,9 +6,11 @@ const Roteador = import.meta.env.VITE_ARTIFACT ? HashRouter : BrowserRouter;
 import { Layout } from './components/Layout';
 import { repo } from './lib/dados';
 import { EmBreve } from './pages/EmBreve';
+import { Ficha } from './pages/Ficha';
 import { Importar } from './pages/Importar';
 import { Leads } from './pages/Leads';
 import { Login } from './pages/Login';
+import { Modelos } from './pages/Modelos';
 
 export default function App() {
   const [usuario, setUsuario] = useState<string | null | undefined>(undefined);
@@ -31,9 +33,10 @@ export default function App() {
         <Route element={<Layout usuario={usuario} demo={repo.modo === 'demo'} onSair={sair} />}>
           <Route path="/" element={<Navigate to="/leads" replace />} />
           <Route path="/leads" element={<Leads />} />
+          <Route path="/leads/:id" element={<Ficha />} />
           <Route path="/importar" element={<Importar />} />
           <Route path="/hoje" element={<EmBreve titulo="Hoje" fase="Fase 2" />} />
-          <Route path="/modelos" element={<EmBreve titulo="Modelos de mensagem" fase="Fase 2" />} />
+          <Route path="/modelos" element={<Modelos />} />
           <Route path="/carteira" element={<EmBreve titulo="Carteira" fase="Fase 3" />} />
           <Route path="*" element={<Navigate to="/leads" replace />} />
         </Route>

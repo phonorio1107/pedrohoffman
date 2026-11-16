@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Analise } from './importar';
-import type { DadosLead, Lead, Lote, Nicho } from './tipos';
+import type { AtualizacaoLead, Canal, DadosLead, EventoLead, Lead, Lote, Modelo, Nicho, TipoEvento } from './tipos';
 
 export interface NovoLote {
   nome: string;
@@ -20,6 +20,13 @@ export interface Repositorio {
   lotes(): Promise<Lote[]>;
   importar(lote: NovoLote, analise: Analise): Promise<Lote>;
   desfazerLote(id: string): Promise<number>;
+  lead(id: string): Promise<Lead | null>;
+  atualizarLead(id: string, mudanca: AtualizacaoLead): Promise<Lead>;
+  eventos(leadId: string): Promise<EventoLead[]>;
+  registrarEvento(leadId: string, tipo: TipoEvento, texto: string | null): Promise<void>;
+  modelos(): Promise<Modelo[]>;
+  salvarModelo(m: { nicho_id: string | null; canal: Canal; nome: string; texto: string }): Promise<Modelo>;
+  apagarModelo(id: string): Promise<void>;
 }
 
 const agora = () => new Date().toISOString();
@@ -97,6 +104,30 @@ function repositorioSupabase(sb: SupabaseClient): Repositorio {
     async desfazerLote(id) {
       return ok(await sb.rpc('desfazer_lote', { p_lote: id })) as number;
     },
+    async lead(id) {
+      return ok(await sb.from('leads').select('*').eq('id', id).maybeSingle()) as Lead | null;
+    },
+    async atualizarLead(id, mudanca) {
+      return ok(await sb.from('leads').update(mudanca).eq('id', id).select('*').single()) as Lead;
+    },
+    async eventos(leadId) {
+      return ok(await sb.from('eventos_lead').select('id, lead_id, tipo, texto, criado_em').eq('lead_id', leadId).order('criado_em', { ascending: false })) as EventoLead[];
+    },
+    async registrarEvento(leadId, tipo, texto) {
+      ok(await sb.from('eventos_lead').insert({ lead_id: leadId, tipo, texto }));
+    },
+    async modelos() {
+      return ok(await sb.from('modelos_mensagem').select('id, nicho_id, canal, nome, texto')) as Modelo[];
+    },
+    async salvarModelo(m) {
+      const busca = sb.from('modelos_mensagem').select('id').eq('canal', m.canal);
+      const existente = ok(await (m.nicho_id ? busca.eq('nicho_id', m.nicho_id) : busca.is('nicho_id', null)).maybeSingle()) as { id: string } | null;
+      const q = existente ? sb.from('modelos_mensagem').update(m).eq('id', existente.id) : sb.from('modelos_mensagem').insert(m);
+      return ok(await q.select('id, nicho_id, canal, nome, texto').single()) as Modelo;
+    },
+    async apagarModelo(id) {
+      ok(await sb.from('modelos_mensagem').delete().eq('id', id));
+    },
   };
 }
 
@@ -106,17 +137,21 @@ interface Banco {
   nichos: Nicho[];
   lotes: Lote[];
   leads: Lead[];
+  eventos: EventoLead[];
+  modelos: Modelo[];
 }
+
+const vazio = (): Banco => ({ nichos: [], lotes: [], leads: [], eventos: [], modelos: [] });
 
 const CHAVE = 'crm-ph-demo';
 
 function repositorioDemo(): Repositorio {
   // Reserva na memória: se o navegador bloquear o armazenamento, a sessão continua funcionando.
-  let memoria: Banco = { nichos: [], lotes: [], leads: [] };
+  let memoria: Banco = vazio();
   const ler = (): Banco => {
     try {
       const salvo = localStorage.getItem(CHAVE);
-      if (salvo) memoria = JSON.parse(salvo) as Banco;
+      if (salvo) memoria = { ...vazio(), ...(JSON.parse(salvo) as Partial<Banco>) };
     } catch {
       /* usa a memória */
     }
@@ -160,9 +195,11 @@ function repositorioDemo(): Repositorio {
       const lote: Lote = { id: id(), ...novo, criado_em: agora(), desfeito_em: null, ...contagens(analise) };
       b.lotes.push(lote);
       for (const n of analise.novos) {
+        const novoId = id();
+        b.eventos.push({ id: id(), lead_id: novoId, tipo: 'importado', texto: `Lote ${lote.nome}`, criado_em: agora() });
         b.leads.push({
           ...n,
-          id: id(),
+          id: novoId,
           lote_id: lote.id,
           nicho_id: novo.nicho_id,
           proximo_passo: null,
@@ -174,7 +211,10 @@ function repositorioDemo(): Repositorio {
       }
       for (const a of analise.atualizacoes) {
         const i = b.leads.findIndex((l) => l.id === a.id);
-        if (i >= 0) b.leads[i] = { ...b.leads[i], ...(a.dados as DadosLead), atualizado_em: agora() };
+        if (i >= 0) {
+          b.leads[i] = { ...b.leads[i], ...(a.dados as DadosLead), atualizado_em: agora() };
+          b.eventos.push({ id: id(), lead_id: a.id, tipo: 'atualizado', texto: `Dados atualizados pelo lote ${lote.nome}`, criado_em: agora() });
+        }
       }
       gravar(b);
       return lote;
@@ -184,10 +224,50 @@ function repositorioDemo(): Repositorio {
       const lote = b.lotes.find((l) => l.id === loteId);
       if (!lote || !podeDesfazer(lote)) throw new Error('Lote não encontrado, já desfeito ou com mais de 7 dias.');
       const antes = b.leads.length;
-      b.leads = b.leads.filter((l) => l.lote_id !== loteId);
+      const apagar = new Set(b.leads.filter((l) => l.lote_id === loteId).map((l) => l.id));
+      b.leads = b.leads.filter((l) => !apagar.has(l.id));
+      b.eventos = b.eventos.filter((e) => !apagar.has(e.lead_id));
       lote.desfeito_em = agora();
       gravar(b);
       return antes - b.leads.length;
+    },
+    async lead(leadId) {
+      return ler().leads.find((l) => l.id === leadId) ?? null;
+    },
+    async atualizarLead(leadId, mudanca) {
+      const b = ler();
+      const i = b.leads.findIndex((l) => l.id === leadId);
+      if (i < 0) throw new Error('Lead não encontrado.');
+      b.leads[i] = { ...b.leads[i], ...mudanca, atualizado_em: agora() };
+      gravar(b);
+      return b.leads[i];
+    },
+    async eventos(leadId) {
+      return ler()
+        .eventos.filter((e) => e.lead_id === leadId)
+        .sort((a, b) => b.criado_em.localeCompare(a.criado_em));
+    },
+    async registrarEvento(leadId, tipo, texto) {
+      const b = ler();
+      b.eventos.push({ id: id(), lead_id: leadId, tipo, texto, criado_em: agora() });
+      gravar(b);
+    },
+    async modelos() {
+      return ler().modelos;
+    },
+    async salvarModelo(m) {
+      const b = ler();
+      const i = b.modelos.findIndex((x) => x.canal === m.canal && x.nicho_id === m.nicho_id);
+      const salvo: Modelo = { id: i >= 0 ? b.modelos[i].id : id(), ...m };
+      if (i >= 0) b.modelos[i] = salvo;
+      else b.modelos.push(salvo);
+      gravar(b);
+      return salvo;
+    },
+    async apagarModelo(modeloId) {
+      const b = ler();
+      b.modelos = b.modelos.filter((x) => x.id !== modeloId);
+      gravar(b);
     },
   };
 }
