@@ -30,7 +30,7 @@ Abre em http://localhost:5173. **Sem o `.env`, abre em modo demonstração**: tu
 ```bash
 npm test                      # regras de importação e da nota
 npm run build                 # confere os tipos e gera dist/
-./scripts/testar-banco.sh     # sobe um Postgres local e testa migração + isolamento (RLS)
+./scripts/testar-banco.sh     # Postgres local: migração, isolamento (RLS) e prova de que o schema public não muda
 ./scripts/gerar-aplicar.sh    # gera o SQL para colar no Supabase (supabase/aplicar/)
 ```
 
@@ -41,14 +41,17 @@ Os dados ficam só no navegador de quem abre (não vão para o Git nem para o Cl
 
 ## Ligar ao Supabase (uma vez)
 
-1. Crie um projeto em supabase.com (região São Paulo).
-2. **SQL Editor > New query**: cole o conteúdo de `supabase/aplicar/01-fase1_prospeccao.sql`, depois o de `02-fase2_modelos_mensagem.sql` (um de cada vez, nessa ordem), e clique em **Run** (se aparecer "Run and enable RLS", confirme). Rodar duas vezes é recusado de propósito.
-3. **Authentication > Users > Add user**: crie o seu usuário com e-mail e senha (marque "Auto Confirm User").
-4. **Authentication > Sign In / Providers**: desligue "Allow new users to sign up". Assim ninguém mais cria conta.
-5. **Project Settings > API**: copie a URL e a chave `anon` para um arquivo `.env` (modelo em `.env.example`).
-6. `npm run dev` de novo: agora pede login e grava no Supabase.
+O CRM guarda tudo no schema `crm`, separado do `public`. Dá para usar um projeto Supabase só dele ou um que já exista (como o Hub): o SQL só cria coisas novas dentro de `crm` e não mexe em nada do `public`.
 
-A chave `anon` é pública por natureza; quem protege os dados é a RLS (cada linha só aparece para o dono). Nunca coloque a chave `service_role` no `.env` do app.
+1. **Antes, se for um projeto com dados seus (Hub):** exporte uma cópia das tabelas principais em CSV. O plano gratuito não faz backup.
+2. **SQL Editor > New query**: cole o conteúdo de `supabase/aplicar/01-fase1_prospeccao.sql`, depois o de `02-fase2_modelos_mensagem.sql` (um de cada vez, nessa ordem), e clique em **Run**. Rodar duas vezes é recusado de propósito.
+3. **Project Settings > API > Exposed schemas**: adicione `crm` e salve. Sem isso o app recebe "schema not found".
+4. **Authentication > Users**: use o seu usuário (ou crie um, marcando "Auto Confirm User"). **Confira que não há outros usuários**: quem tem login poderia gravar leads no CRM.
+5. **Authentication > Sign In / Providers**: desligue "Allow new users to sign up" (se ainda estiver ligado).
+6. **Project Settings > API**: copie o **Project URL** e a chave **anon/publishable** para um `.env` (modelo em `.env.example`). Nunca use a chave `service_role` ou `secret`.
+7. `npm run dev`: agora pede login e grava no Supabase.
+
+A chave `anon` é pública por natureza; quem protege os dados é a RLS (cada linha só aparece para o dono).
 
 ## Publicar no Cloudflare (Workers com arquivos estáticos)
 

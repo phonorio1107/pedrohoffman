@@ -49,7 +49,7 @@ function contagens(analise: Analise) {
 
 // Supabase ----------------------------------------------------------------------
 
-function repositorioSupabase(sb: SupabaseClient): Repositorio {
+function repositorioSupabase(sb: SupabaseClient<any, 'crm', any>): Repositorio {
   const ok = <T>(r: { data: T | null; error: { message: string } | null }): T => {
     if (r.error) throw new Error(r.error.message);
     return r.data as T;
@@ -282,4 +282,6 @@ function repositorioDemo(): Repositorio {
 const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const chave = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-export const repo: Repositorio = url && chave ? repositorioSupabase(createClient(url, chave)) : repositorioDemo();
+// Todas as tabelas do CRM ficam no schema "crm", separado do "public" (onde mora, por exemplo, o Hub).
+// O schema precisa estar em Project Settings > API > Exposed schemas.
+export const repo: Repositorio = url && chave ? repositorioSupabase(createClient(url, chave, { db: { schema: 'crm' } })) : repositorioDemo();

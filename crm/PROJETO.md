@@ -14,7 +14,7 @@ Página de teste (dados só no navegador): https://claude.ai/artifact/DXDXtXK2N8
 - Celular: barra com Pular, Copiar e Abrir no WhatsApp; ao voltar, pergunta "Mandou a mensagem?" e segue para o próximo lead.
 
 ## Falta
-- **Pedro:** criar o Supabase e rodar `supabase/aplicar/01` e depois `02` no SQL Editor.
+- **Pedro:** no Supabase do Hub: exportar uma cópia dos dados, rodar `supabase/aplicar/01` e depois `02` no SQL Editor, e adicionar `crm` em Settings > API > Exposed schemas.
 - **Pedro:** deixar o repositório privado antes de usar com dados reais.
 - **Pedro:** publicar no Cloudflare (passos no `README.md`).
 - Carteira de clientes (contratos, pagamentos, alertas): quando fechar o primeiro cliente.
@@ -29,4 +29,5 @@ Página de teste (dados só no navegador): https://claude.ai/artifact/DXDXtXK2N8
 - Alta oportunidade a partir de 65.
 - Meta padrão de 12 mensagens por dia; limite de 3 pilotos.
 - **Em aberto:** rever os pesos da nota quando o nicho for escolhido (hoje favorecem quem não tem site).
-- **Em aberto:** Supabase gratuito ou Pro.
+- O CRM usa o projeto Supabase do Hub (plano gratuito já tem 2 projetos), num schema próprio `crm`.
+- **Em aberto:** Supabase Pro, se o CRM virar essencial (backup).
