@@ -27,8 +27,10 @@ npm run dev
 Abre em http://localhost:5173. **Sem o `.env`, abre em modo demonstração**: tudo fica só no navegador, ótimo para testar uma planilha.
 
 ```bash
-npm test        # regras de importação e da nota
-npm run build   # confere os tipos e gera dist/
+npm test                      # regras de importação e da nota
+npm run build                 # confere os tipos e gera dist/
+./scripts/testar-banco.sh     # sobe um Postgres local e testa migração + isolamento (RLS)
+./scripts/gerar-aplicar.sh    # gera o SQL para colar no Supabase (supabase/aplicar/)
 ```
 
 ## Testar sem instalar nada
@@ -39,7 +41,7 @@ Os dados ficam só no navegador de quem abre (não vão para o Git nem para o Cl
 ## Ligar ao Supabase (uma vez)
 
 1. Crie um projeto em supabase.com (região São Paulo).
-2. **SQL Editor > New query**: cole `supabase/migrations/0001_fase1_prospeccao.sql` e clique em **Run**.
+2. **SQL Editor > New query**: cole o conteúdo de `supabase/aplicar/01-fase1_prospeccao.sql` e clique em **Run** (se aparecer "Run and enable RLS", confirme). Rodar duas vezes é recusado de propósito.
 3. **Authentication > Users > Add user**: crie o seu usuário com e-mail e senha (marque "Auto Confirm User").
 4. **Authentication > Sign In / Providers**: desligue "Allow new users to sign up". Assim ninguém mais cria conta.
 5. **Project Settings > API**: copie a URL e a chave `anon` para um arquivo `.env` (modelo em `.env.example`).
@@ -47,12 +49,13 @@ Os dados ficam só no navegador de quem abre (não vão para o Git nem para o Cl
 
 A chave `anon` é pública por natureza; quem protege os dados é a RLS (cada linha só aparece para o dono). Nunca coloque a chave `service_role` no `.env` do app.
 
-## Publicar no Cloudflare Pages
+## Publicar no Cloudflare (Workers com arquivos estáticos)
 
-1. Cloudflare > Workers & Pages > Create > Pages > conectar o repositório.
-2. **Root directory:** `crm` · **Build command:** `npm run build` · **Output:** `dist`.
-3. Em **Environment variables**, as mesmas `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`.
-4. Para as rotas funcionarem ao recarregar a página, o arquivo `public/_redirects` já manda tudo para o `index.html`.
+Padrão dos sistemas da marca: Workers com arquivos estáticos, não Pages. O `wrangler.jsonc` já está pronto (`assets.directory: ./dist` e `not_found_handling: single-page-application`, que dispensa `_redirects`). O build gera `dist/_headers` com a política de segurança (CSP).
+
+1. Cloudflare > Workers & Pages > Create > **Import a repository** (Workers) > escolha este repositório.
+2. **Root directory:** `crm` · **Build command:** `npm run build` · **Deploy command:** `npx wrangler deploy` · branch: `main`.
+3. Em **Variables and secrets (build)**, as mesmas `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`.
 
 ## Como a importação funciona
 

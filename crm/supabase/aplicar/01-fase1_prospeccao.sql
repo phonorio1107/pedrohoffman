@@ -1,6 +1,19 @@
+-- CRM Pedro Hoffman · 20261116190000_fase1_prospeccao
+-- Cole no Supabase: SQL Editor > New query > Run. Se aparecer "Run and enable RLS", pode confirmar.
+begin;
+create schema if not exists controle;
+create table if not exists controle.migracoes (nome text primary key, aplicada_em timestamptz not null default now());
+revoke all on schema controle from anon, authenticated;
+revoke all on controle.migracoes from anon, authenticated;
+do $$ begin
+  if exists (select 1 from controle.migracoes where nome = '20261116190000_fase1_prospeccao') then
+    raise exception 'A migração 20261116190000_fase1_prospeccao já foi aplicada neste banco.';
+  end if;
+end $$;
 -- CRM Pedro Hoffman · Fase 1: nichos, lotes, leads e histórico.
--- Rode no Supabase: SQL Editor > New query > cole este arquivo > Run.
+-- Não rode este arquivo direto: use o de supabase/aplicar/, que já registra a migração.
 -- Toda linha tem um "dono" (o usuário logado) e a RLS só deixa cada um ver o que é seu.
+-- Com "Automatically expose new tables" desligado, cada tabela precisa de grant explícito.
 
 create extension if not exists pgcrypto;
 
@@ -103,16 +116,34 @@ create table public.eventos_lead (
 
 create index eventos_lead_lead on public.eventos_lead (lead_id, criado_em desc);
 
--- Segurança (RLS): só o dono enxerga e mexe ---------------------------------
+-- Segurança: RLS ligada, grants explícitos e uma política por operação ------
 alter table public.nichos enable row level security;
 alter table public.lotes enable row level security;
 alter table public.leads enable row level security;
 alter table public.eventos_lead enable row level security;
 
-create policy "dono" on public.nichos for all using (dono = auth.uid()) with check (dono = auth.uid());
-create policy "dono" on public.lotes for all using (dono = auth.uid()) with check (dono = auth.uid());
-create policy "dono" on public.leads for all using (dono = auth.uid()) with check (dono = auth.uid());
-create policy "dono" on public.eventos_lead for all using (dono = auth.uid()) with check (dono = auth.uid());
+revoke all on public.nichos, public.lotes, public.leads, public.eventos_lead from anon, authenticated;
+grant select, insert, update, delete on public.nichos, public.lotes, public.leads, public.eventos_lead to authenticated;
+
+create policy "nichos_select" on public.nichos for select to authenticated using (dono = auth.uid());
+create policy "nichos_insert" on public.nichos for insert to authenticated with check (dono = auth.uid());
+create policy "nichos_update" on public.nichos for update to authenticated using (dono = auth.uid()) with check (dono = auth.uid());
+create policy "nichos_delete" on public.nichos for delete to authenticated using (dono = auth.uid());
+
+create policy "lotes_select" on public.lotes for select to authenticated using (dono = auth.uid());
+create policy "lotes_insert" on public.lotes for insert to authenticated with check (dono = auth.uid());
+create policy "lotes_update" on public.lotes for update to authenticated using (dono = auth.uid()) with check (dono = auth.uid());
+create policy "lotes_delete" on public.lotes for delete to authenticated using (dono = auth.uid());
+
+create policy "leads_select" on public.leads for select to authenticated using (dono = auth.uid());
+create policy "leads_insert" on public.leads for insert to authenticated with check (dono = auth.uid());
+create policy "leads_update" on public.leads for update to authenticated using (dono = auth.uid()) with check (dono = auth.uid());
+create policy "leads_delete" on public.leads for delete to authenticated using (dono = auth.uid());
+
+create policy "eventos_lead_select" on public.eventos_lead for select to authenticated using (dono = auth.uid());
+create policy "eventos_lead_insert" on public.eventos_lead for insert to authenticated with check (dono = auth.uid());
+create policy "eventos_lead_update" on public.eventos_lead for update to authenticated using (dono = auth.uid()) with check (dono = auth.uid());
+create policy "eventos_lead_delete" on public.eventos_lead for delete to authenticated using (dono = auth.uid());
 
 -- Desfazer um lote (até 7 dias): apaga os leads que nasceram nele.
 -- Leads que já existiam e só foram atualizados continuam.
@@ -135,3 +166,9 @@ begin
   update public.lotes set desfeito_em = now() where id = p_lote;
   return apagados;
 end $$;
+
+revoke all on function public.desfazer_lote(uuid) from public, anon;
+grant execute on function public.desfazer_lote(uuid) to authenticated;
+
+insert into controle.migracoes (nome) values ('20261116190000_fase1_prospeccao');
+commit;
