@@ -9,7 +9,7 @@ Tudo em texto simples (Markdown) para o Claude ler e escrever junto com você.
 
 | Pasta | Para quê | Arquivo principal |
 |---|---|---|
-| `marca/` | Voz, tom e regras visuais resumidas | `voz.md`, `visual.md` |
+| `marca/` | Voz, tom, regras visuais resumidas, logos e ícones | `voz.md`, `visual.md`, `logos/`, `icones/` |
 | `conteudo/` | Estratégia, calendário, ideias e cada post | `estrategia.md`, `calendario/2026-11.md`, `ideias.md` |
 | `conteudo/posts/` | Uma pasta por peça (arte, vídeo, legenda) | `post.json`, `video.json`, `legenda.md` |
 | `rotina/` | Semana padrão, demandas e automações | `semana.md`, `demandas.md`, `automacoes.md` |

@@ -15,6 +15,17 @@ Fonte completa: design system **Pedro Hoffman Degrau** e canvas **Marca Pedro Ho
 
 Proporção: papel 60% · tinta 25% · névoa 10% · marinho 5%.
 
+### Degradê azul (só nas peças de comunicação)
+| Nome | Hex | Uso |
+|---|---|---|
+| azul-brilho | `#4A7BD0` | Fim do degradê no claro e brilho dos cantos |
+| azul-gelo | `#C9DAF6` | Meio do degradê no escuro |
+| azul-céu | `#6F9BE8` | Fim do degradê no escuro |
+
+- Palavra-chave do título, uma por título: no claro `#1E3F73 → #4A7BD0`; no escuro `#FFFFFF → #C9DAF6 → #6F9BE8`.
+- Brilho marinho suave nos cantos dos posts.
+- Nunca no logo, em botões, em texto corrido ou na interface dos sistemas dos clientes.
+
 ## Tipografia
 - **Inter Tight** nos títulos e no logo ("Pedro" 500, "Hoffman" 700), espaçamento negativo.
 - **Inter** no texto.
@@ -28,7 +39,9 @@ Proporção: papel 60% · tinta 25% · névoa 10% · marinho 5%.
 - Margem de 96 px no feed. Story e Reels: 250 px livres no topo e 340 px embaixo.
 
 ## Logo
+Arquivos prontos (SVG, nome em curvas) em `marca/logos/`; favicon, ícone de app e foto de perfil em `marca/icones/`.
 - Sempre tinta, papel, ou branco sobre marinho. Nunca colorido.
+- Usuário da marca nas peças: `@pedrohoffman.ia`.
 - Não igualar as colunas, não espelhar, não esticar, sem sombra nem degradê.
 
 ## Medidas
