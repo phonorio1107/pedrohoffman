@@ -1,6 +1,8 @@
 {
-  // Cloudflare Workers com arquivos estáticos (não Pages). Publica a branch main.
+  // Cloudflare Workers com arquivos estáticos (não Pages). Publica a branch de produção definida no Cloudflare.
   "name": "pedrohoffman-crm",
+  // Endereço público gratuito (pedrohoffman-crm.<conta>.workers.dev).
+  "workers_dev": true,
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./dist",
